@@ -1,6 +1,4 @@
-;;
-;; mu7889yoon Y.Nakamura Emacs config
-;;
+;; init.el --- mu7889yoon Y.Nakamura
 
 ;;
 ;;STARTUP
@@ -10,6 +8,8 @@
 (split-window-vertically)
 (other-window 1)
 (add-hook 'emacs-startup-hook 'eshell)
+;;disable statup message
+(setq inhibit-startup-message t)
 
 ;;
 ;;PACKAGE MANAGER
@@ -29,23 +29,20 @@
   (load bootstrap-file nil 'nomessage))
 
 ;;
+;;FRAMEWORK
 ;;
-;;
-
 ;;helm.el
 (straight-use-package 'helm)
 (require 'helm-config)
 (helm-mode 1)
 (helm-autoresize-mode t)
 (global-set-key (kbd "C-s") 'helm-occur)
-;;disable statup message
-(setq inhibit-startup-message t)
+
 
  
 ;;
 ;;TEXT COMPLETION
 ;;
-
 ;;company.el
 (straight-use-package 'company)
 (straight-use-package 'dash)
@@ -72,13 +69,11 @@
 ;;
 ;;INTERFACE
 ;;
-
 ;;linum.el 行番号を表示
 (straight-use-package 'linum)
+(setq linum-format "%d ")
 (global-linum-mode t)
-
-;;line-number.el 行番号を表示
-
+(set-face-foreground 'linum "grey")
 
 ;;neotree.el ディレクトリツリー表示
 (straight-use-package 'neotree)
@@ -95,6 +90,7 @@
 ;;doom-modeline.el 現在使用しているモードライン
 (straight-use-package 'doom-modeline)
 (doom-modeline-mode 1)
+
 ;;beacon.el 現在のカーソル位置を目立たせるパッケージ
 (straight-use-package 'beacon)
 (beacon-mode 1)
@@ -103,11 +99,11 @@
 (straight-use-package 'symbol-overlay)
 (add-hook 'prog-mode-hook 'symbol-overlay-mode)
 
-;;hide-mode-line.el
+;;hide-mode-line.el neotreeのモードラインを非表示
 (straight-use-package 'hide-mode-line)
 (add-hook 'neotree-mode-hook #'hide-mode-line-mode)
 
-;;時刻表示
+;;モードラインに時刻表示
 (display-time-mode t)
 (setq display-time-24hr-format t)
 ;;タイトルバーにファイルのフルパスを表示
@@ -117,8 +113,8 @@
 ;;
 ;;MINOR MODE
 ;;
-
 ;;php-mode
+(straight-use-package 'php-mode)
 (require 'php-mode)
 
 ;;docker-mode.el
@@ -133,13 +129,13 @@
 ;;KEY BIND
 ;;
 (straight-use-package 'bind-key)
+(bind-key "<tab>" 'my-tab)
 (bind-key "TAB" 'my-tab)
-(bind-key "tab" '#my-tab)
 (with-eval-after-load 'company
+  (bind-key "<tab>" 'my-tab company-active-map)
   (bind-key "TAB" 'my-tab company-active-map)
-  (bind-key "tab" 'my-tab company-active-map)
-  (bind-key "TAB" 'my-tab company-mode-map)
-  (bind-key "tab" 'my-tab company-mode-map))
+  (bind-key "<tab>" 'my-tab company-mode-map)
+  (bind-key "TAB" 'my-tab company-mode-map))
 (define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 
 
