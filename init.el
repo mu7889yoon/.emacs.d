@@ -1,16 +1,28 @@
-;;
-;; mu7889yoon Y.Nakamura Emacs config
+;; mu7889yoon Y.Nakamura's Emacs settings
 ;;
 
-;;
-;;STARTUP
-;;
-(split-window-horizontally)
-(other-window 1)
-(split-window-vertically)
-(other-window 1)
-(add-hook 'emacs-startup-hook 'eshell)
 
+
+;;
+;;START UP SETTING
+;;
+;;クリップボードの共有
+(defun copy-from-osx ()
+ (shell-command-to-string "pbpaste"))
+
+(defun paste-to-osx (text &optional push)
+ (let ((process-connection-type nil))
+     (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+       (process-send-string proc text)
+       (process-send-eof proc))))
+
+(setq interprogram-cut-function 'paste-to-osx)
+(setq interprogram-paste-function 'copy-from-osx)
+;;disable statup message
+(setq inhibit-startup-message t)
+
+(menu-bar-mode -1)
+(tool-bar-mode 0)
 ;;
 ;;PACKAGE MANAGER
 ;;
@@ -29,23 +41,26 @@
   (load bootstrap-file nil 'nomessage))
 
 ;;
+;;FRAMEWORK
 ;;
-;;
-
 ;;helm.el
 (straight-use-package 'helm)
 (require 'helm-config)
 (helm-mode 1)
 (helm-autoresize-mode t)
 (global-set-key (kbd "C-s") 'helm-occur)
-;;disable statup message
-(setq inhibit-startup-message t)
-
- 
 ;;
 ;;TEXT COMPLETION
 ;;
-
+;;copilot.el
+(straight-use-package
+ '(copilot :type git :host github :repo "zerolfx/copilot.el" :files ("dist" "*.el")))
+(setq copilot-node-executable "~/.nvm/versions/node/v17.9.1/bin/node")
+(setq copilot-mode t)
+(add-hook 'prog-mode-hook 'copilot-mode)
+(with-eval-after-load 'company
+  ;; disable inline previews
+  (delq 'company-preview-if-just-one-frontend company-frontends))
 ;;company.el
 (straight-use-package 'company)
 (straight-use-package 'dash)
@@ -57,28 +72,18 @@
       company-dabbrev-other-buffers nil
       company-dabbrev-downcase nil
       company-dabbrev-ignore-case nil)
-(global-company-mode)
+;;(global-company-mode)
+(add-hook 'after-init-hook 'global-company-mode)
 
-;;copilot.el
-(straight-use-package
- '(copilot :type git :host github :repo "zerolfx/copilot.el" :files ("dist" "*.el")))
-(setq copilot-node-executable "~/.nvm/versions/node/v17.9.1/bin/node")
-(add-hook 'prog-mode-hook 'copilot-mode)
-(defun my-tab ()
-  (interactive)
-  (or (copilot-accept-completion)
-      (company-indent-or-complete-common nil)))
-
+  
 ;;
-;;INTERFACE
+;;Interface
 ;;
-
 ;;linum.el 行番号を表示
 (straight-use-package 'linum)
+(setq linum-format "%d ")
 (global-linum-mode t)
-
-;;line-number.el 行番号を表示
-
+(set-face-foreground 'linum "grey")
 
 ;;neotree.el ディレクトリツリー表示
 (straight-use-package 'neotree)
@@ -95,6 +100,7 @@
 ;;doom-modeline.el 現在使用しているモードライン
 (straight-use-package 'doom-modeline)
 (doom-modeline-mode 1)
+
 ;;beacon.el 現在のカーソル位置を目立たせるパッケージ
 (straight-use-package 'beacon)
 (beacon-mode 1)
@@ -103,22 +109,26 @@
 (straight-use-package 'symbol-overlay)
 (add-hook 'prog-mode-hook 'symbol-overlay-mode)
 
-;;hide-mode-line.el
+;;hide-mode-line.el neotreeのモードラインを非表示
 (straight-use-package 'hide-mode-line)
 (add-hook 'neotree-mode-hook #'hide-mode-line-mode)
 
-;;時刻表示
+;;モードラインに時刻表示
 (display-time-mode t)
 (setq display-time-24hr-format t)
 ;;タイトルバーにファイルのフルパスを表示
 (setq frame-title-format "%b %f %& %Z")
 
+;;centaur-tabs.el タブバーを表示
+(straight-use-package 'centaur-tabs)
+(centaur-tabs-mode t)
+(setq centaur-tabs-cycle-scope 'tabs)
 
 ;;
 ;;MINOR MODE
 ;;
-
 ;;php-mode
+(straight-use-package 'php-mode)
 (require 'php-mode)
 
 ;;docker-mode.el
@@ -129,21 +139,37 @@
 (straight-use-package 'docker-compose-mode)
 (require 'docker-compose-mode)
 
+;;latex-mode yatex.el
+(straight-use-package 'yatex)
+(setq auto-mode-alist
+      (cons (cons "\\.tex$" 'yatex-mode) auto-mode-alist))
+
+;;markdown-mode.el
+(straight-use-package 'markdown-mode)
+(require 'markdown-mode)
+
 ;;
 ;;KEY BIND
 ;;
 (straight-use-package 'bind-key)
-(bind-key "TAB" 'my-tab)
-(bind-key "tab" '#my-tab)
-(with-eval-after-load 'company
-  (bind-key "TAB" 'my-tab company-active-map)
-  (bind-key "tab" 'my-tab company-active-map)
-  (bind-key "TAB" 'my-tab company-mode-map)
-  (bind-key "tab" 'my-tab company-mode-map))
+;;C-h をバックスペースに
 (define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 
+;;centaur-tabs keybind
+(bind-key "M-<tab>" 'centaur-tabs-forward)
+(bind-key "M-TAB" 'centaur-tabs-forward)
+(bind-key "C-M-i" 'centaur-tabs-VERSION)
+;;ウィンドウ移動を方向キーに
+(bind-key "M-<right>" 'windmove-right)
+(bind-key "M-<left>" 'windmove-left)
+
 
 ;;
-;;VERSION CONTROL
+;;CONTROL forward
 ;;
+(defvar copilot-completion-map
+  (let ((km (make-keymap)))
+    (define-key km (kbd "<tab>") 'copilot-accept-completion)
+    (define-key km  (kbd "TAB") 'copilot-accept-completion)
+    km))
 
