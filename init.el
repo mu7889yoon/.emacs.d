@@ -220,10 +220,18 @@
 ;; helm
 (bind-key "C-s" 'helm-occur)
 ;;
-;; TRAMP mode
+;; remote
 ;;
+
+;; tramp.el
 (straight-use-package 'tramp)
 (add-hook 'eshell-mode-hook (lambda () (company-mode -1)) 'append) 
+
+;; docker-tramp.el
+(straight-use-package 'docker-tramp)
+(require 'docker-tramp-compat)
+(setq docker-tramp-use-names t)
+
 
 ;;
 ;; magit.el
