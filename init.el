@@ -5,7 +5,7 @@
 
 
 ;;
-;;START UP SETTING
+;; START UP
 ;;
 ;;クリップボードの共有
 (defun copy-from-osx ()
