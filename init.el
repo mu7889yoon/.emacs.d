@@ -9,7 +9,7 @@
 ;;
 ;;クリップボードの共有
 (defun copy-from-osx ()
- (shell-command-to-string "pbpaste"))
+  (shell-command-to-string "pbpaste"))
 (defun paste-to-osx (text &optional push)
  (let ((process-connection-type nil))
      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
@@ -44,15 +44,20 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+
 ;;
-;;FRAMEWORK
+;; FRAMEWORK
 ;;
-;;helm.el
+;; helm.el
 (straight-use-package 'helm)
 (require 'helm-config)
 (helm-mode 1)
 (helm-autoresize-mode t)
-(global-set-key (kbd "C-s") 'helm-occur)
+
+;; emacs-which-key.el
+(straight-use-package 'which-key)
+(which-key-mode)
+(add-hook 'after-init-hook' which-key-mode)
 
 ;;
 ;;TEXT COMPLETION
@@ -64,10 +69,9 @@
 (setq copilot-mode t)
 (add-hook 'prog-mode-hook 'copilot-mode)
 
-;; disable inline previews
-;; (delq 'company-preview-if-just-one-frontend company-frontends))
 
 ;; company.el
+
 (straight-use-package 'company)
 (straight-use-package 'dash)
 (straight-use-package 's)
@@ -77,11 +81,17 @@
       company-tooltip-align-annotations t
       company-dabbrev-other-buffers nil
       company-dabbrev-downcase nil
-      company-dabbrev-ignore-case nil)
+      company-dabbrev-ignore-case nil
+      company-format-margin-function nil)
+
 ;;(global-company-mode)
 (add-hook 'after-init-hook 'global-company-mode)
 
-  
+;; company-box.el
+(straight-use-package 'company-box)
+(add-hook 'company-mode-hook 'company-box-mode)
+
+
 ;;
 ;;Interface
 ;;
@@ -91,6 +101,7 @@
 (global-linum-mode t)
 (set-face-foreground 'linum "grey")
 
+
 ;;neotree.el ディレクトリツリー表示
 (straight-use-package 'neotree)
 :init
@@ -98,12 +109,23 @@
   (setq neo-smart-open t)
 (setq neo-create-file-auto-open t)
 
+
+
 ;;doom-themes.el 現在使用しているテーマ（コメントの色変更）
 (straight-use-package 'doom-themes)
 (setq doom-dracula-brighter-comments t)
 (load-theme 'doom-dracula t)
 
-;;doom-modeline.el 現在使用しているモードライン
+
+;;(load-theme 'doom-city-lights t)
+
+
+
+;; powerline.el
+(straight-use-package 'powerline)
+(powerline-default-theme)
+
+;; doom-modeline.el
 (straight-use-package 'doom-modeline)
 (doom-modeline-mode 1)
 
@@ -122,13 +144,22 @@
 ;;モードラインに時刻表示
 (display-time-mode t)
 (setq display-time-24hr-format t)
+
 ;; タイトルバーにファイルのフルパスを表示
 (setq frame-title-format "%b %f %& %Z")
 
-;;centaur-tabs.el タブバーを表示
-(straight-use-package 'centaur-tabs)
-(centaur-tabs-mode t)
-(setq centaur-tabs-cycle-scope 'tabs)
+;; rainbow-delimiters.el 括弧を色分け
+(straight-use-package 'rainbow-delimiters)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+;; バッテリーの残量を表示
+(display-battery-mode t)
+
+;; バッテリー表示をアイコンに
+(setq battery-mode-line-format "[%b%p%%]")
+(setq battery-load-critical 10)
+(setq battery-load-low 20)
+
 
 ;;
 ;;MINOR MODE
@@ -155,6 +186,15 @@
 (straight-use-package 'markdown-mode)
 (require 'markdown-mode)
 
+;; org-mode.el
+(straight-use-package 'org)
+(require 'org)
+(setq org-directory "~/Google Drive/マイドライブ/Org/")
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+
+
+
+
 ;;
 ;;KEY BIND
 ;;
@@ -162,18 +202,23 @@
 ;;C-h をバックスペースに
 (define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 
-;;centaur-tabs keybind
-(bind-key "M-<tab>" 'centaur-tabs-forward)
-(bind-key "M-TAB" 'centaur-tabs-forward)
-(bind-key "C-M-i" 'centaur-tabs-VERSION)
 
 ;; ウィンドウ移動を方向キーに
 (bind-key "M-<right>" 'windmove-right)
 (bind-key "M-<left>" 'windmove-left)
 
 ;; copilot-mode.el
-(bind-key "C-x a c" 'copilot-accept-completion)
-
+(bind-key "C-x ac" 'copilot-accept-completion)
+;; org-capture.el
+(bind-key "C-c c" 'org-capture)
+(setq org-capture-templates
+      '(("n" "Note" entry (file+headline "~/Google Drive/マイドライブ/Org/notes.org" "Notes")
+	 "* %?\nEntered on %U\n %i\n %a")
+	))
+;; imenu-list
+(bind-key "<f10>" 'imenu-list-smart-toggle)
+;; helm
+(bind-key "C-s" 'helm-occur)
 ;;
 ;; TRAMP mode
 ;;
@@ -185,3 +230,5 @@
 ;;
 (straight-use-package 'magit)
 (bind-key "C-x g" 'magit-status)
+
+
