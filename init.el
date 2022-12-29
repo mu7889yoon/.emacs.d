@@ -1,3 +1,4 @@
+;;
 ;; mu7889yoon Y.Nakamura's Emacs settings
 ;;
 
@@ -9,20 +10,23 @@
 ;;クリップボードの共有
 (defun copy-from-osx ()
  (shell-command-to-string "pbpaste"))
-
 (defun paste-to-osx (text &optional push)
  (let ((process-connection-type nil))
      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
        (process-send-string proc text)
        (process-send-eof proc))))
-
 (setq interprogram-cut-function 'paste-to-osx)
 (setq interprogram-paste-function 'copy-from-osx)
+
 ;;disable statup message
 (setq inhibit-startup-message t)
 
 (menu-bar-mode -1)
 (tool-bar-mode 0)
+(scroll-bar-mode 0)
+
+
+
 ;;
 ;;PACKAGE MANAGER
 ;;
@@ -49,6 +53,7 @@
 (helm-mode 1)
 (helm-autoresize-mode t)
 (global-set-key (kbd "C-s") 'helm-occur)
+
 ;;
 ;;TEXT COMPLETION
 ;;
@@ -58,10 +63,18 @@
 (setq copilot-node-executable "~/.nvm/versions/node/v17.9.1/bin/node")
 (setq copilot-mode t)
 (add-hook 'prog-mode-hook 'copilot-mode)
-(with-eval-after-load 'company
-  ;; disable inline previews
-  (delq 'company-preview-if-just-one-frontend company-frontends))
-;;company.el
+;; TABキーを押された時にcopilotで補完する。
+;;(defun my/copilot-tab ()
+;;  (interactive)
+;;  (or (copilot-accept-completion)
+;;      (indent-for-tab-command)))
+
+(bind-key "C-x a c" 'copilot-accept-completion)
+
+;; disable inline previews
+;; (delq 'company-preview-if-just-one-frontend company-frontends))
+
+;; company.el
 (straight-use-package 'company)
 (straight-use-package 'dash)
 (straight-use-package 's)
@@ -127,7 +140,8 @@
 ;;
 ;;MINOR MODE
 ;;
-;;php-mode
+;;php-mode.el
+
 (straight-use-package 'php-mode)
 (require 'php-mode)
 
@@ -163,13 +177,15 @@
 (bind-key "M-<right>" 'windmove-right)
 (bind-key "M-<left>" 'windmove-left)
 
+;;
+;; TRAMP mode
+;;
+(straight-use-package 'tramp)
+(add-hook 'eshell-mode-hook (lambda () (company-mode -1)) 'append) 
 
 ;;
-;;CONTROL forward
+;; magit.el
 ;;
-(defvar copilot-completion-map
-  (let ((km (make-keymap)))
-    (define-key km (kbd "<tab>") 'copilot-accept-completion)
-    (define-key km  (kbd "TAB") 'copilot-accept-completion)
-    km))
+(straight-use-package 'magit)
+(bind-key "C-x g" 'magit-status)
 
