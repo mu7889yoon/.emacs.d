@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ;;
 ;; mu7889yoon Y.Nakamura's Emacs settings
 ;;
@@ -27,6 +28,21 @@
 
 
 
+=======
+;; init.el --- mu7889yoon Y.Nakamura
+
+;;
+;;STARTUP
+;;
+(split-window-horizontally)
+(other-window 1)
+(split-window-vertically)
+(other-window 1)
+(add-hook 'emacs-startup-hook 'eshell)
+;;disable statup message
+(setq inhibit-startup-message t)
+
+>>>>>>> origin/main
 ;;
 ;;PACKAGE MANAGER
 ;;
@@ -54,6 +70,7 @@
 (helm-autoresize-mode t)
 (global-set-key (kbd "C-s") 'helm-occur)
 
+<<<<<<< HEAD
 ;;
 ;;TEXT COMPLETION
 ;;
@@ -69,6 +86,14 @@
 ;; (delq 'company-preview-if-just-one-frontend company-frontends))
 
 ;; company.el
+=======
+
+ 
+;;
+;;TEXT COMPLETION
+;;
+;;company.el
+>>>>>>> origin/main
 (straight-use-package 'company)
 (straight-use-package 'dash)
 (straight-use-package 's)
@@ -79,12 +104,29 @@
       company-dabbrev-other-buffers nil
       company-dabbrev-downcase nil
       company-dabbrev-ignore-case nil)
+<<<<<<< HEAD
 ;;(global-company-mode)
 (add-hook 'after-init-hook 'global-company-mode)
 
   
 ;;
 ;;Interface
+=======
+(global-company-mode)
+
+;;copilot.el
+(straight-use-package
+ '(copilot :type git :host github :repo "zerolfx/copilot.el" :files ("dist" "*.el")))
+(setq copilot-node-executable "~/.nvm/versions/node/v17.9.1/bin/node")
+(add-hook 'prog-mode-hook 'copilot-mode)
+(defun my-tab ()
+  (interactive)
+  (or (copilot-accept-completion)
+      (company-indent-or-complete-common nil)))
+
+;;
+;;INTERFACE
+>>>>>>> origin/main
 ;;
 ;;linum.el 行番号を表示
 (straight-use-package 'linum)
@@ -126,16 +168,23 @@
 ;;タイトルバーにファイルのフルパスを表示
 (setq frame-title-format "%b %f %& %Z")
 
+<<<<<<< HEAD
 ;;centaur-tabs.el タブバーを表示
 (straight-use-package 'centaur-tabs)
 (centaur-tabs-mode t)
 (setq centaur-tabs-cycle-scope 'tabs)
+=======
+>>>>>>> origin/main
 
 ;;
 ;;MINOR MODE
 ;;
+<<<<<<< HEAD
 ;;php-mode.el
 
+=======
+;;php-mode
+>>>>>>> origin/main
 (straight-use-package 'php-mode)
 (require 'php-mode)
 
@@ -147,6 +196,7 @@
 (straight-use-package 'docker-compose-mode)
 (require 'docker-compose-mode)
 
+<<<<<<< HEAD
 ;;latex-mode yatex.el
 (straight-use-package 'yatex)
 (setq auto-mode-alist
@@ -156,10 +206,13 @@
 (straight-use-package 'markdown-mode)
 (require 'markdown-mode)
 
+=======
+>>>>>>> origin/main
 ;;
 ;;KEY BIND
 ;;
 (straight-use-package 'bind-key)
+<<<<<<< HEAD
 ;;C-h をバックスペースに
 (define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 
@@ -182,4 +235,19 @@
 ;;
 (straight-use-package 'magit)
 (bind-key "C-x g" 'magit-status)
+=======
+(bind-key "<tab>" 'my-tab)
+(bind-key "TAB" 'my-tab)
+(with-eval-after-load 'company
+  (bind-key "<tab>" 'my-tab company-active-map)
+  (bind-key "TAB" 'my-tab company-active-map)
+  (bind-key "<tab>" 'my-tab company-mode-map)
+  (bind-key "TAB" 'my-tab company-mode-map))
+(define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
+
+
+;;
+;;VERSION CONTROL
+;;
+>>>>>>> origin/main
 
