@@ -63,12 +63,6 @@
 (setq copilot-node-executable "~/.nvm/versions/node/v17.9.1/bin/node")
 (setq copilot-mode t)
 (add-hook 'prog-mode-hook 'copilot-mode)
-;; TABキーを押された時にcopilotで補完する。
-;;(defun my/copilot-tab ()
-;;  (interactive)
-;;  (or (copilot-accept-completion)
-;;      (indent-for-tab-command)))
-
 (bind-key "C-x a c" 'copilot-accept-completion)
 
 ;; disable inline previews
