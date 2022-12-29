@@ -63,7 +63,6 @@
 (setq copilot-node-executable "~/.nvm/versions/node/v17.9.1/bin/node")
 (setq copilot-mode t)
 (add-hook 'prog-mode-hook 'copilot-mode)
-(bind-key "C-x a c" 'copilot-accept-completion)
 
 ;; disable inline previews
 ;; (delq 'company-preview-if-just-one-frontend company-frontends))
@@ -123,7 +122,7 @@
 ;;モードラインに時刻表示
 (display-time-mode t)
 (setq display-time-24hr-format t)
-;;タイトルバーにファイルのフルパスを表示
+;; タイトルバーにファイルのフルパスを表示
 (setq frame-title-format "%b %f %& %Z")
 
 ;;centaur-tabs.el タブバーを表示
@@ -167,9 +166,13 @@
 (bind-key "M-<tab>" 'centaur-tabs-forward)
 (bind-key "M-TAB" 'centaur-tabs-forward)
 (bind-key "C-M-i" 'centaur-tabs-VERSION)
-;;ウィンドウ移動を方向キーに
+
+;; ウィンドウ移動を方向キーに
 (bind-key "M-<right>" 'windmove-right)
 (bind-key "M-<left>" 'windmove-left)
+
+;; copilot-mode.el
+(bind-key "C-x a c" 'copilot-accept-completion)
 
 ;;
 ;; TRAMP mode
